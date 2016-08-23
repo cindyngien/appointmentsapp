@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Edit Appointment</title>
+</head>
+<body>
+<h3>Edit Your Appointment</h3>
+<p><a href="{% url 'myapp:logoff' %}">Logoff</a></p>
+<p><a href="{% url 'myapp:home' %}">Dashboard</a></p>
+
+{% if messages %}
+  {% for message in messages %}
+      <i><p{% if message.tags %} class="{{ message.tags }}"{% endif %}> {{ message }} </p></i>
+  {% endfor %}
+{% endif %}
+<hr>
+<form action="{% url 'myapp:update' app_id=myapp.id %}" method='post'>
+    {% csrf_token %}
+    <p>Task:<input type='text' name='task' value='{{ myapp.my_task }}'></p>
+    <p>Status:<select name='status'>
+                      <option value='Pending'>Pending</option>
+                      <option value='Missed'>Missed</option>
+                      <option value='Done'>Done</option>
+            </select>
+    </p>
+    <p>Date:<input type='date' name='date' value='{{ myapp.my_date|date:"Y-m-d" }}'></p>
+    <p>Time:<input type='time' name='time' value='{{ myapp.my_time|time:"H:i" }}'></p>
+    <p><input type='submit' value='Update Appointment'></p>
+    <input type='hidden' name='appt_id' value='{{ myapp.id }}'>
+  </form>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Appointments</title>
+</head>
+<body>
+    <p><a href="{% url 'myapp:logoff' %}">Logoff</a></p>
+    <h1>Welcome, {{request.session.user.name}}!</h1>
+    {% if messages %}
+      {% for message in messages %}
+      <i><p{% if message.tags %} class="{{ message.tags }}"{% endif %}> {{ message }} </p></i>
+      {% endfor %}
+    {% endif %}
+    <hr>
+    <h3>Here are your appointments for today, {{today}}:</h3>
+    <table>
+        <tr>
+          <th>Task</th>
+          <th>Time</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+        {% for myapp in todayappointment %}
+      <tr>
+        <td>{{ myapp.my_task }}</td>
+        <td>{{ myapp.my_time }}</td>
+        <td>{{ myapp.my_status }}</td>
+        {% if myapp.my_status == 'Pending' or myapp.my_status == 'Missed' %}
+          <td><a href="{% url 'myapp:edit' app_id=myapp.id %}">Edit</a> <a href="{% url 'myapp:delete' app_id=myapp.id %}">Delete</a></td>
+        {% else %}
+      <td></td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+    </table>
+    <hr>
+    <h3>Your Other appointments:</h3>
+    <table>
+        <tr>
+          <th>Task</th>
+          <th>Date</th>
+          <th>Time</th>
+        </tr>
+        {% for myapp in futureappointment %}
+          <tr>
+            <td>{{ myapp.my_task }}</td>
+            <td>{{ myapp.my_date }}</td>
+            <td>{{ myapp.my_time }}</td>
+          </tr>
+        {% endfor %}
+    </table>
+    <hr>
+    <h3>Add Appointment</h3>
+    <form action="{% url 'myapp:create' %}" method='post'>
+      {% csrf_token %}
+        Date:<input type="date" name='date'><br>
+        Time:<input type="time" name='time'><br>
+        Task:<input type = 'text' name='task'><br>
+        <input type="submit" value="add">
+    </form>
+</body>
+</html>
